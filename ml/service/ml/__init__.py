@@ -1,5 +1,8 @@
 from sklearn.externals import joblib 
 import json, re 
+import os
+import sys
+import urllib.request
 # 1. python 3.3 이하 버전과 하위 호환을 위해서 사용
 # 2. 패키지 자체를 지칭할때 사용
 
@@ -38,7 +41,7 @@ def detect_lang( text ):
 # 개인별로 신청한 키
 CLIENT_ID = 'DG9a4VLy9OS7dxqBvQFO'
 SECRET_KEY = 'WZj8dJt7b2'
-
+PAPAGO_URL = "https://openapi.naver.com/v1/papago/n2mt" 
 '''
 curl "https://openapi.naver.com/v1/papago/n2mt" \
 -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
@@ -49,7 +52,22 @@ curl "https://openapi.naver.com/v1/papago/n2mt" \
 # 4. 번역 함수 (현:파파고연동, 향후:RNN 구현)
 def transfer_lang( text, na_input_code='en', na_output_code='ko' ):
     print('파파고와 연동한 번역 처리 시작')
-    return {}
+
+    # client_id = CLIENT_ID # 개발자센터에서 발급받은 Client ID 값
+    # client_secret = SECRET_KEY # 개발자센터에서 발급받은 Client Secret 값
+
+    encText = urllib.parse.quote( text )        #한글의 URL 인코딩 처리 => %2D.... 변환 처리
+    data = "source={}&target={}&text={}".format(na_input_code, na_output_code, encText) #파라미터 구성
+    request = urllib.request.Request(PAPAGO_URL)        #요청 객체 생성
+    request.add_header("X-Naver-Client-Id", CLIENT_ID)  #헤더 설정
+    request.add_header("X-Naver-Client-Secret", SECRET_KEY) #헤더 설정
+    print(data)
+    response = urllib.request.urlopen(request, data=data.encode("utf-8")) #요청
+    rescode = response.getcode()
+    if(rescode==200): # 응답 성공
+      return json.load( response )
+    else:
+        return {}
 
 # 이 코드는 개발시 테스트 했던 코드이다. 
 # 의도(개발시)될때만 작동해야 한다 

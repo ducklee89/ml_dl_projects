@@ -36,6 +36,7 @@
                         console.log( '성공', resData )
                         // 언어를 감지한 내용을 화면에 표시
                         $('span').html(resData.code_str)
+                        code=resData.code
                     },
             
                     error:( err )=>{    // 통신이 실패하면 호출되는 함수
@@ -56,7 +57,7 @@
              let oriText = $('#oriText').val()
              $.post({
                     url:'/transfer', /// 서버 주소
-                    data:'o=${oriText}&na=${code}', //전달할 데이터=> o는 원문&na=en
+                    data:`o=${oriText}&na=${code}`, //전달할 데이터=> o는 원문&na=en #  ` ` <= 구별 하기 => ' '
                     dataType:'json',        // 응답 데이터의 형태
                     success:( resData )=>{ // 통신이 성공하면 나오는 결과를 처리하는 함수
                         console.log( '성공', resData )
@@ -75,7 +76,7 @@
                             }
                         }
                         */
-                        $('.outText').val(resData.transTxt)
+                        $('.outText').val(resData.message.result.translatedText)
                     },
             
                     error:( err )=>{    // 통신이 실패하면 호출되는 함수

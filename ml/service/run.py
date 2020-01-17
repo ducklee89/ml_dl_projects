@@ -72,6 +72,7 @@ def transfer():
     na = request.form.get('na')
 
     #번역
+    print(na)
     res = transfer_lang( oriTxt, na )
     #로그 처리
     #응답
